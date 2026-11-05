@@ -1,0 +1,8 @@
+.venv/
+.uv-cache/
+.env
+__pycache__/
+*.py[cod]
+.coverage
+staticfiles/
+.pytest_cache/
