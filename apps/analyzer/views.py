@@ -4,12 +4,13 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 
 from .analysis import analyze_resume
-from .parsing import MAX_RESUME_LENGTH, extract_resume
+from .constants import MAX_RESUME_LENGTH
+from .utils import extract_resume
 
 
 @never_cache
 @require_http_methods(["GET", "POST"])
-def index(request):
+def resume_analyzer(request):
     context = {
         "api_configured": bool(settings.GEMINI_API_KEY),
         "resume_text": request.POST.get("resume_text", ""),

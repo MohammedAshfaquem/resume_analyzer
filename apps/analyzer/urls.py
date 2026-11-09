@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import index
+from .views import resume_analyzer
 
 
-urlpatterns = [path("", index, name="index")]
+urlpatterns = [path("", resume_analyzer, name="resume_analyzer")]

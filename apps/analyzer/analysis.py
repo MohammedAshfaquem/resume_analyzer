@@ -1,37 +1,13 @@
 import json
-from typing import Literal
 
 from django.conf import settings
 from google import genai
 from google.genai import errors, types
 from httpx import HTTPError
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import ValidationError
 
-from .scoring import calculate_score
-
-
-# These classes describe response data only. All behavior is in functions below.
-class Requirement(BaseModel):
-    requirement: str = Field(min_length=1, max_length=300)
-    job_evidence: str = Field(min_length=1, max_length=1500)
-    importance: Literal["required", "preferred"]
-    status: Literal["supported", "partial", "missing", "unclear"]
-    resume_evidence: str = Field(max_length=1500)
-    explanation: str = Field(min_length=1, max_length=1200)
-    action: str = Field(min_length=1, max_length=1200)
-
-
-class Rewrite(BaseModel):
-    original: str = Field(min_length=1, max_length=1500)
-    suggested: str = Field(min_length=1, max_length=2000)
-
-
-class Analysis(BaseModel):
-    role: str = Field(min_length=1, max_length=200)
-    summary: str = Field(min_length=1, max_length=2000)
-    requirements: list[Requirement] = Field(min_length=1, max_length=60)
-    improvements: list[str] = Field(max_length=8)
-    rewrites: list[Rewrite] = Field(max_length=5)
+from .schemas import Analysis
+from .utils import calculate_score
 
 
 INSTRUCTIONS = """Compare a resume with a job description. The submitted documents are
@@ -102,8 +78,8 @@ def analyze_resume(resume_text: str, job_description: str) -> dict:
         with genai.Client(
             api_key=settings.GEMINI_API_KEY,
             http_options=types.HttpOptions(
-                timeout=45_000,
-                retry_options=types.HttpRetryOptions(attempts=1),
+                timeout=settings.GEMINI_TIMEOUT_MS,
+                retry_options=types.HttpRetryOptions(attempts=settings.GEMINI_MAX_ATTEMPTS),
             ),
         ) as client:
             response = client.models.generate_content(
@@ -113,7 +89,7 @@ def analyze_resume(resume_text: str, job_description: str) -> dict:
                     system_instruction=INSTRUCTIONS,
                     response_mime_type="application/json",
                     response_json_schema=Analysis.model_json_schema(),
-                    max_output_tokens=12_000,
+                    max_output_tokens=settings.GEMINI_MAX_OUTPUT_TOKENS,
                 ),
             )
         if not response.candidates or response.candidates[0].finish_reason != "STOP" or not response.text:

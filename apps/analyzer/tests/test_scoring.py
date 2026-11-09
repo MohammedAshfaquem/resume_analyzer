@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from apps.analyzer.scoring import calculate_score
+from apps.analyzer.utils import calculate_score
 
 
 class ScoringTests(TestCase):

@@ -2,14 +2,14 @@
 {% block title %}Your fit report — Rolewise{% endblock %}
 {% block content %}
 <section class="results-intro" id="overview">
-    <p class="eyebrow"><span aria-hidden="true">✦</span> A LITTLE CLARITY FOR YOUR NEXT CHAPTER</p>
+    <p class="eyebrow">02 / MATCH REPORT</p>
     <div class="results-heading"><div><h1>Your fit report<span>.</span></h1><p class="muted">{{ result.role }}</p></div><button type="button" class="button secondary" id="download-report">Download report <span aria-hidden="true">↓</span></button></div>
 </section>
 <div class="dashboard-grid">
     <section class="score-panel panel">
         <div class="card-title"><h2>Resume match score</h2><span class="tiny-label">AI ANALYSIS</span></div>
         <div class="score-ring" data-value="{{ result.score }}" style="--score: {{ result.score }}" aria-label="{{ result.score }}% requirement coverage">
-            <svg viewBox="0 0 240 240" aria-hidden="true"><defs><linearGradient id="ring-gradient" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#b497ff"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs><circle class="ring-track" cx="120" cy="120" r="94"/><circle class="ring-progress" cx="120" cy="120" r="94" pathLength="100"/></svg>
+            <svg viewBox="0 0 240 240" aria-hidden="true"><defs><linearGradient id="ring-gradient" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#608671"/><stop offset="100%" stop-color="#3d543e"/></linearGradient></defs><circle class="ring-track" cx="120" cy="120" r="94"/><circle class="ring-progress" cx="120" cy="120" r="94" pathLength="100"/></svg>
             <div class="score-number"><span data-score="{{ result.score }}" aria-hidden="true">{{ result.score }}%</span><p>Requirement coverage</p></div>
         </div>
         <div class="score-explanation"><h3>{{ result.role }}</h3><p>{{ result.summary }}</p><span class="analysis-complete"><span aria-hidden="true">✓</span> Your resume has been analyzed</span></div>
@@ -50,7 +50,7 @@
     <textarea name="resume_text" hidden>{{ resume_text }}</textarea>
     <textarea name="job_description" hidden>{{ job_description }}</textarea>
     <button type="submit" name="action" value="edit" class="button primary">Edit text &amp; analyze again <span aria-hidden="true">↗</span></button>
-    <a href="{% url 'index' %}" class="text-button">Start a new comparison</a>
+    <a href="{% url 'resume_analyzer' %}" class="text-button">Start a new comparison</a>
 </form>
 <p class="privacy-note">Download your report before leaving. This app does not save your analysis or edits.</p>
 {{ result|json_script:"report-data" }}

@@ -10,9 +10,8 @@
 
 - `config/`: settings and root URLs/WSGI/ASGI entry points.
 - `apps/analyzer/views.py`: upload, preview and analysis requests.
-- `apps/analyzer/parsing.py`: bounded PDF/DOCX text extraction.
+- `apps/analyzer/utils.py`: bounded PDF/DOCX text extraction and weighted requirement coverage.
 - `apps/analyzer/analysis.py`: structured AI response and evidence validation.
-- `apps/analyzer/scoring.py`: transparent weighted requirement coverage.
 - `templates/analyzer/`: input and results templates.
 - `static/analyzer/`: local CSS and progressive JavaScript.
 - `apps/analyzer/tests/`: parsing, scoring, AI boundary and request tests.

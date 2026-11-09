@@ -5,7 +5,7 @@ import pymupdf
 from django.core.files.uploadedfile import SimpleUploadedFile
 from docx import Document
 
-from apps.analyzer.parsing import extract_resume
+from apps.analyzer.utils import extract_resume
 
 
 class ParsingTests(TestCase):

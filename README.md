@@ -2,7 +2,7 @@
 
 A small Django application that compares a resume with a job description and suggests truthful improvements. No login, database, saved history, React app, or frontend build step.
 
-The interface uses a purple dashboard layout inspired by [this Mock AI design](https://dribbble.com/shots/27213385-Mock-AI-AI-Resume-Analyzer-SaaS-Design). Local CSS and vanilla JavaScript provide an animated score ring, score count-up, coverage bar, floating document illustration, card reveals and hover feedback. Motion respects `prefers-reduced-motion`, and content stays readable with JavaScript disabled. Sidebar and requirement chips link to actual page sections; dashboard values come from the analysis result.
+The dashboard uses a warm paper palette, a soft iridescent background, and locally served Manrope and DM Sans. Local CSS and JavaScript provide the animated score ring, score count-up, coverage bar, card reveals and hover feedback. Motion respects `prefers-reduced-motion`, and content stays readable with JavaScript disabled. The dashboard layout was inspired by [Mock AI](https://dribbble.com/shots/27213385-Mock-AI-AI-Resume-Analyzer-SaaS-Design).
 
 ## Run locally (Windows PowerShell)
 
@@ -50,9 +50,10 @@ Resume Analyzer/
 │       ├── apps.py          # Django app registration
 │       ├── urls.py
 │       ├── views.py         # Function-based upload/preview/analysis view
-│       ├── parsing.py       # PDF and DOCX extraction
-│       ├── analysis.py      # AI response schema and evidence checks
-│       ├── scoring.py       # Python coverage calculation
+│       ├── constants.py     # Upload and resume length limits
+│       ├── utils.py         # Resume extraction and match scoring
+│       ├── analysis.py      # Gemini call and evidence checks
+│       ├── schemas.py       # Pydantic response schemas
 │       └── tests/
 │           ├── __init__.py
 │           ├── test_parsing.py
@@ -76,7 +77,7 @@ Resume Analyzer/
     └── implementation-plan.md
 ```
 
-Read `apps/analyzer/views.py` first, then `parsing.py`, `analysis.py` and `scoring.py` in the same folder. Application logic uses normal functions. The three small Pydantic classes in `analysis.py` only describe structured response data; `apps.py` uses Django's standard app configuration class, and test classes use Django/unittest conventions. There are no models, class-based views, repositories or service abstractions. Styles are plain local CSS to keep this version free of Node tooling and CDN dependencies.
+Start with `apps/analyzer/views.py` for the request flow. `utils.py` holds the parsing and scoring functions, and `analysis.py` handles Gemini and verifies the evidence. The Pydantic classes in `schemas.py` describe the Gemini response. Django serves the local CSS and JavaScript directly.
 
 App-specific tests live beside the analyzer code; complete request/response tests live in the root `tests/` package. Templates and static assets stay namespaced under `analyzer/` so future apps can use their own filenames. Development and production dependency files currently include the same base packages; add environment-specific packages only when needed. Install production dependencies with `pip install -r requirements/production.txt`.
 

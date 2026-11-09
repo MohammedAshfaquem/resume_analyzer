@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Compare your resume with a job description and find clear, evidence-based improvements.">
     <title>{% block title %}Rolewise — Resume analyzer{% endblock %}</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%237c3aed'/%3E%3Ctext x='11' y='29' fill='white' font-size='28' font-family='sans-serif'%3Er%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%233d543e'/%3E%3Ctext x='11' y='29' fill='white' font-size='28' font-family='sans-serif'%3Er%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="{% static 'analyzer/style.css' %}">
     <script src="{% static 'analyzer/app.js' %}" defer></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <aside class="sidebar" aria-label="Workspace navigation">
-        <a class="brand" href="{% url 'index' %}" aria-label="Rolewise home"><span class="brand-icon">r.</span>rolewise<span class="brand-dot">.</span></a>
+        <a class="brand" href="{% url 'resume_analyzer' %}" aria-label="Rolewise home">rolewise<span class="brand-dot">.</span></a>
         <p class="nav-label">YOUR WORKSPACE</p>
         <nav class="side-nav">
-            <a class="selected" href="{% url 'index' %}" {% if not result %}aria-current="page"{% endif %}><span aria-hidden="true">✧</span> Resume Analyzer</a>
+            <a class="selected" href="{% url 'resume_analyzer' %}" {% if not result %}aria-current="page"{% endif %}><span aria-hidden="true">✧</span> Resume Analyzer</a>
             {% if result %}
             <a href="#overview"><span aria-hidden="true">◴</span> Match overview</a>
             <a href="#requirements"><span aria-hidden="true">≡</span> Requirement details</a>
@@ -26,13 +26,12 @@
             <a href="#privacy"><span aria-hidden="true">◇</span> Your privacy</a>
             {% endif %}
         </nav>
-        <div class="sidebar-note"><span class="note-spark" aria-hidden="true">✦</span><h2>A little clarity.<br>A bigger next step.</h2><p>Turn your experience into a stronger application.</p><span class="note-pill">Built around your experience</span></div>
-        <p class="sidebar-footer">A fresh start, every visit.<br>No login or saved history.</p>
+        <p class="sidebar-footer">Your CV stays unsaved.</p>
     </aside>
     <div class="workspace">
         <header class="site-header"><div><span class="breadcrumb">Workspace <span aria-hidden="true">/</span></span><strong>Resume Analyzer</strong></div><span class="header-note"><span class="status-dot"></span> Private by design</span></header>
         <main id="main" class="wrap">{% block content %}{% endblock %}</main>
-        <footer class="site-footer wrap"><span>Made for your next move.</span><span>Powered by Gemini <span aria-hidden="true">✧</span></span></footer>
+        <footer class="site-footer wrap"><span>Rolewise</span><span>Powered by Gemini</span></footer>
     </div>
 </body>
 </html>
