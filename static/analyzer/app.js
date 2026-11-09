@@ -12,11 +12,96 @@ document.querySelectorAll('textarea[maxlength]').forEach((field) => {
     field.addEventListener('input', () => updateCount(field));
 });
 
-fileInput?.addEventListener('change', () => {
-    document.querySelector('#file-label').textContent = fileInput.files[0]?.name || 'Choose your resume';
-});
+function setupUploadDialog() {
+    const dialog = document.querySelector('#upload-dialog');
+    if (!dialog || typeof dialog.showModal !== 'function') return;
 
-document.querySelector('#load-example')?.addEventListener('click', () => {
+    const launcher = document.querySelector('#open-upload');
+    const browse = document.querySelector('#browse-resume');
+    const dropZone = document.querySelector('#upload-zone');
+    const fileRow = document.querySelector('#upload-file');
+    const fileName = document.querySelector('#upload-filename');
+    const fileSize = document.querySelector('#upload-size');
+    const error = document.querySelector('#upload-error');
+    const extract = document.querySelector('#extract-resume');
+
+    function updateSelection() {
+        const file = fileInput.files[0];
+        let message = '';
+        if (file && !/\.(pdf|docx)$/i.test(file.name)) {
+            message = 'Choose a PDF or DOCX file.';
+        } else if (file && (!file.size || file.size > Number(fileInput.dataset.maxBytes))) {
+            message = 'Choose a non-empty file within the size limit.';
+        }
+
+        if (message) fileInput.value = '';
+        const selected = fileInput.files[0];
+        fileRow.hidden = !selected;
+        extract.disabled = !selected;
+        error.textContent = message;
+        error.hidden = !message;
+
+        if (selected) {
+            fileName.textContent = selected.name;
+            fileSize.textContent = selected.size < 1024 * 1024
+                ? `${Math.max(1, Math.round(selected.size / 1024))} KB`
+                : `${(selected.size / (1024 * 1024)).toFixed(1)} MB`;
+        }
+    }
+
+    dialog.append(document.querySelector('#upload-fields'));
+    document.querySelector('#upload-label').textContent = 'Choose a file or drag it here';
+    fileInput.hidden = true;
+    browse.hidden = false;
+    launcher.hidden = false;
+    updateSelection();
+
+    launcher.addEventListener('click', () => {
+        dialog.showModal();
+        browse.focus();
+    });
+    browse.addEventListener('click', () => fileInput.click());
+    document.querySelector('#close-upload').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => {
+        fileInput.value = '';
+        updateSelection();
+        launcher.focus();
+    });
+    document.querySelector('#remove-upload').addEventListener('click', () => {
+        fileInput.value = '';
+        updateSelection();
+        browse.focus();
+    });
+    fileInput.addEventListener('change', updateSelection);
+
+    dropZone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropZone.classList.add('is-dragging');
+    });
+    dropZone.addEventListener('dragleave', (event) => {
+        if (!dropZone.contains(event.relatedTarget)) dropZone.classList.remove('is-dragging');
+    });
+    dropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropZone.classList.remove('is-dragging');
+        const files = event.dataTransfer.files;
+        if (files.length !== 1) {
+            fileInput.value = '';
+            updateSelection();
+            error.textContent = 'Drop one resume at a time.';
+            error.hidden = false;
+            return;
+        }
+        fileInput.files = files;
+        updateSelection();
+    });
+}
+
+setupUploadDialog();
+
+const exampleButton = document.querySelector('#load-example');
+if (exampleButton) exampleButton.hidden = false;
+exampleButton?.addEventListener('click', () => {
     if ((resumeText.value.trim() || jobText.value.trim()) && !window.confirm('Replace the current text with an example?')) return;
     resumeText.value = `Alex Morgan — Junior Python Developer
 Skills: Python, Django, SQL, Git, HTML, CSS
@@ -53,6 +138,7 @@ document.querySelector('[data-loading-form]')?.addEventListener('submit', (event
         return;
     }
     submitting = true;
+    if (action === 'extract') document.querySelector('#upload-progress').hidden = false;
     if (action === 'analyze') {
         document.querySelector('#loading-message').hidden = false;
         document.querySelector('#loading-message').scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'nearest' });
@@ -66,8 +152,9 @@ window.addEventListener('pageshow', () => {
     submitting = false;
     document.querySelector('[aria-busy]')?.removeAttribute('aria-busy');
     document.querySelectorAll('button[aria-disabled]').forEach((button) => button.removeAttribute('aria-disabled'));
-    const loading = document.querySelector('#loading-message');
-    if (loading) loading.hidden = true;
+    document.querySelectorAll('#loading-message, #upload-progress').forEach((message) => {
+        message.hidden = true;
+    });
 });
 
 function downloadReport() {

@@ -20,29 +20,51 @@
     <input type="hidden" name="preview" value="{% if preview %}true{% else %}false{% endif %}">
     <div class="input-grid">
         <section class="panel input-panel">
-            <div class="panel-heading"><div><p class="eyebrow">THE STARTING POINT</p><h2>Your resume</h2></div><span class="document-icon" aria-hidden="true">↥</span></div>
-            <p class="muted">Upload your CV, or paste the text below.</p>
-            <div class="upload-zone" id="upload-zone">
-                <label for="resume-file"><span class="upload-symbol" aria-hidden="true">↑</span><strong id="file-label">Choose your resume</strong><span>PDF or DOCX · up to 5 MB · PDFs up to 15 pages</span></label>
-                <input type="file" id="resume-file" name="resume" accept=".pdf,.docx" aria-describedby="upload-help">
-                <button class="button small secondary" type="submit" name="action" value="extract" formnovalidate>Extract text <span aria-hidden="true">↗</span></button>
+            <div class="panel-heading">
+                <div><p class="eyebrow">THE STARTING POINT</p><h2>Your resume</h2></div>
+                <button class="button small secondary upload-launch" type="button" id="open-upload" aria-haspopup="dialog" aria-controls="upload-dialog" hidden><svg class="icon" width="18" height="18" fill="none" stroke="currentColor" aria-hidden="true"><use href="#icon-upload"/></svg> Upload resume</button>
             </div>
-            <p class="helper" id="upload-help">Text-based files work best. Scanned PDFs need OCR.</p>
+            <p class="muted">Upload your CV, or paste the text below.</p>
+            <dialog class="upload-dialog" id="upload-dialog" aria-labelledby="upload-title">
+                <div class="upload-header">
+                    <div><h2 id="upload-title">Upload your resume</h2><p class="helper">Choose one file to review its text.</p></div>
+                    <button type="button" class="icon-button" id="close-upload" aria-label="Close upload"><svg class="icon" width="18" height="18" fill="none" stroke="currentColor" aria-hidden="true"><use href="#icon-close"/></svg></button>
+                </div>
+            </dialog>
+            <div id="upload-fields">
+                <div class="upload-zone" id="upload-zone">
+                    <svg class="icon upload-symbol" width="25" height="25" fill="none" stroke="currentColor" aria-hidden="true"><use href="#icon-upload"/></svg>
+                    <label for="resume-file" id="upload-label">Choose your resume</label>
+                    <p class="upload-formats" id="upload-formats">PDF or DOCX · up to 5 MB · PDFs up to 15 pages</p>
+                    <input type="file" id="resume-file" name="resume" accept=".pdf,.docx" data-max-bytes="{{ max_upload_bytes }}" aria-describedby="upload-formats upload-help">
+                    <button class="button small primary" type="button" id="browse-resume" aria-describedby="upload-formats upload-help" hidden>Browse files</button>
+                </div>
+                <p class="helper" id="upload-help">Text-based files work best. Scanned PDFs need OCR.</p>
+                <div class="upload-file" id="upload-file" hidden>
+                    <svg class="icon" width="18" height="18" fill="none" stroke="currentColor" aria-hidden="true"><use href="#icon-file"/></svg>
+                    <div><strong id="upload-filename"></strong><span id="upload-size"></span></div>
+                    <button type="button" class="icon-button" id="remove-upload" aria-label="Remove file"><svg class="icon" width="18" height="18" fill="none" stroke="currentColor" aria-hidden="true"><use href="#icon-close"/></svg></button>
+                </div>
+                <p class="upload-error" id="upload-error" role="alert" hidden></p>
+                <div class="upload-actions">
+                    <span class="helper" id="upload-progress" role="status" hidden>Extracting text…</span>
+                    <button class="button small secondary" type="submit" name="action" value="extract" id="extract-resume" formnovalidate>Extract text <svg class="icon" width="18" height="18" fill="none" stroke="currentColor" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+                </div>
+            </div>
             <div class="field-heading"><label for="resume-text">{% if preview %}Review extracted text{% else %}Or paste your resume{% endif %}</label><span class="char-count" data-count-for="resume-text">0 / 40,000</span></div>
             <textarea id="resume-text" name="resume_text" rows="10" maxlength="40000" placeholder="Your skills, experience, projects and education…">{{ resume_text }}</textarea>
-            <p class="helper">Check the reading order and correct anything missing before analyzing.</p>
+            <p class="helper field-help">Check the extracted text before analyzing.</p>
         </section>
         <section class="panel input-panel">
             <div class="panel-heading"><div><p class="eyebrow">THE OPPORTUNITY</p><h2>Job description</h2></div><span class="document-icon" aria-hidden="true">≡</span></div>
             <p class="muted">Paste the role you’re interested in.</p>
-            <label class="sr-only" for="job-description">Job description</label>
-            <textarea id="job-description" class="job-textarea" name="job_description" rows="23" maxlength="20000" placeholder="Job title and overview&#10;&#10;Responsibilities&#10;• What you’ll work on&#10;• What you’ll help the team achieve&#10;&#10;Requirements&#10;• Required skills and experience&#10;• Preferred qualifications">{{ job_description }}</textarea>
-            <div class="field-heading"><span class="helper">Include both required and preferred qualifications.</span><span class="char-count" data-count-for="job-description">0 / 20,000</span></div>
+            <div class="field-heading"><label for="job-description">Paste job description</label><span class="char-count" data-count-for="job-description">0 / 20,000</span></div>
+            <textarea id="job-description" name="job_description" rows="10" maxlength="20000" placeholder="Job title and overview&#10;&#10;Responsibilities&#10;• What you’ll work on&#10;• What you’ll help the team achieve&#10;&#10;Requirements&#10;• Required skills and experience&#10;• Preferred qualifications">{{ job_description }}</textarea>
+            <p class="helper field-help">Include required and preferred qualifications.</p>
         </section>
     </div>
     <div class="form-actions">
-        <button type="button" class="text-button" id="load-example">Try example text <span aria-hidden="true">↗</span></button>
-        <button type="submit" name="action" value="analyze" class="button primary">Analyze my fit <span aria-hidden="true">→</span></button>
+        <button type="submit" name="action" value="analyze" class="button primary">Analyze my fit <svg class="icon" width="18" height="18" fill="none" stroke="currentColor" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
     </div>
     <div class="loading-message" id="loading-message" role="status" hidden><span class="loading-spinner" aria-hidden="true"></span><div><strong>Connecting the dots…</strong><p>Reviewing the evidence and preparing your feedback. This can take up to a minute.</p></div></div>
     <p id="example-message" class="helper" role="status" hidden>Example text loaded. Analysis uses the real AI service and requires an API key.</p>

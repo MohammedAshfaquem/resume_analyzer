@@ -4,7 +4,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 
 from .analysis import analyze_resume
-from .constants import MAX_RESUME_LENGTH
+from .constants import MAX_FILE_SIZE, MAX_RESUME_LENGTH
 from .utils import extract_resume
 
 
@@ -13,6 +13,7 @@ from .utils import extract_resume
 def resume_analyzer(request):
     context = {
         "api_configured": bool(settings.GEMINI_API_KEY),
+        "max_upload_bytes": MAX_FILE_SIZE,
         "resume_text": request.POST.get("resume_text", ""),
         "job_description": request.POST.get("job_description", ""),
         "preview": request.POST.get("preview") == "true",

@@ -52,6 +52,6 @@
     <button type="submit" name="action" value="edit" class="button primary">Edit text &amp; analyze again <span aria-hidden="true">↗</span></button>
     <a href="{% url 'resume_analyzer' %}" class="text-button">Start a new comparison</a>
 </form>
-<p class="privacy-note">Download your report before leaving. This app does not save your analysis or edits.</p>
+<p class="privacy-note" id="privacy">Google Gemini processes the CV and job description text. Download your report to keep a copy of the analysis.</p>
 {{ result|json_script:"report-data" }}
 {% endblock %}
